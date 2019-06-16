@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 
-from .api_exception import InvalidQueryParam
+from .api_exception import InvalidQueryParam, InvalidContentType
 from .datasource import create_datasource
 from .handlers import create_rates_handler
 from .params import iso_date_param, ports_param
@@ -44,6 +44,12 @@ def create_app():
 
     @app.errorhandler(InvalidQueryParam)
     def handle_invalid_query_param(error):
+        response = jsonify({'message': error.message})
+        response.status_code = 400
+        return response
+
+    @app.errorhandler(InvalidContentType)
+    def handle_invalid_content_type(error):
         response = jsonify({'message': error.message})
         response.status_code = 400
         return response
