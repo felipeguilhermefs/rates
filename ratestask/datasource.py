@@ -1,7 +1,7 @@
 from psycopg2 import pool
 
 
-def create_datasource(
+def create_pool(
     user,
     password,
     port,
@@ -12,7 +12,7 @@ def create_datasource(
 ):
     # We create a pool so we go easier on the database
     # and we can handle request faster as well
-    connections_pool = pool.ThreadedConnectionPool(
+    return pool.ThreadedConnectionPool(
         minconn=min_conn,
         maxconn=max_conn,
         user=user,
@@ -22,15 +22,35 @@ def create_datasource(
         database=database
     )
 
+def create_read_datasource(pool):
+
     def execute(query, row_mapper):
         # we abstract connection handling as managing a pool and cursor 
         # do not need to be done at every interaction with the datasource
-        conn = connections_pool.getconn()
+        conn = pool.getconn()
         try:
             with conn.cursor() as cur:
                 cur.execute(query)
                 return [row_mapper(record) for record in cur]
         finally:
-            connections_pool.putconn(conn)
+            pool.putconn(conn)
+
+    return execute
+
+def create_write_datasource(pool):
+
+    def execute(inserts):
+        # like read, we abstract connection handling
+        conn = pool.getconn()
+        try:
+            with conn.cursor() as cur:
+                for insert in inserts:
+                    cur.execute(insert)
+                conn.commit()
+
+        except Exception:
+            conn.rollback()
+        finally:
+            pool.putconn(conn)
 
     return execute
