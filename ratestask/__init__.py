@@ -2,13 +2,16 @@ from flask import Flask, jsonify, request
 
 from .api_exception import InvalidQueryParam
 from .params import iso_date_param, ports_param
+from .queries import create_fetch_ports
 
 
 def create_app():
     app = Flask(__name__)
 
-    def fetch_ports(_):
+    def datasource(_, __):
         return ['TESTS', 'TESTX']
+
+    fetch_ports = create_fetch_ports(datasource)
 
     date_from_param = iso_date_param('date_from')
     date_to_param = iso_date_param('date_to')
