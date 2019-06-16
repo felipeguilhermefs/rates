@@ -10,12 +10,14 @@ from .queries import create_fetch_exchange_rates, create_fetch_ports, create_fet
 def create_app():
     app = Flask(__name__)
 
+    app.config.from_pyfile('config.py', silent=True)
+
     connection_pool = create_pool(
-        user='postgres',
-        password=None,
-        host='localhost',
-        port='5432',
-        database='postgres'
+        user=app.config['PG_USER'],
+        password=app.config['PG_PASS'],
+        host=app.config['PG_HOST'],
+        port=app.config['PG_PORT'],
+        database=app.config['PG_DB']
     )
 
     read_datasource = create_read_datasource(connection_pool)
@@ -23,7 +25,7 @@ def create_app():
 
     fetch_ports = create_fetch_ports(read_datasource)
     fetch_rates = create_fetch_rates(read_datasource)
-    fetch_exchange_rates = create_fetch_exchange_rates('a7656307f2e64132bd6a335d0e6daa2b')
+    fetch_exchange_rates = create_fetch_exchange_rates(app.config['EX_RT_API_KEY'])
     insert_prices = create_insert_prices(write_datasource)
 
     date_from_param = iso_date_param('date_from')
