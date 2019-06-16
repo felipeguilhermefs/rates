@@ -39,6 +39,21 @@ def create_app():
 
         return jsonify(rates)
 
+    @app.route('/rates_null')
+    def get_rates_null():
+        params = request.args
+        date_from = date_from_param(params)
+        date_to = date_to_param(params)
+        orig_ports = orig_ports_param(params)
+        dest_ports = dest_ports_param(params)
+
+        rates = []
+        if orig_ports and dest_ports:
+            rates = fetch_rates(date_from, date_to,
+                                orig_ports, dest_ports, min_sample=3)
+
+        return jsonify(rates)
+
     @app.errorhandler(InvalidQueryParam)
     def handle_invalid_query_param(error):
         response = jsonify({'message': error.message})
