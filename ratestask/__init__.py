@@ -1,16 +1,15 @@
 from flask import Flask, jsonify, request
 
 from .api_exception import InvalidQueryParam, InvalidContentType
-from .datasource import create_datasource
+from .datasource import create_pool, create_read_datasource
 from .handlers import create_rates_handler
-from .params import iso_date_param, ports_param
-from .queries import create_fetch_ports, create_fetch_rates
-
+from .params import iso_date_param, ports_param, currency_param
+from .queries import create_fetch_exchange_rates, create_fetch_ports, create_fetch_rates
 
 def create_app():
     app = Flask(__name__)
 
-    datasource = create_datasource(
+    connection_pool = create_pool(
         user='postgres',
         password=None,
         host='localhost',
@@ -18,8 +17,11 @@ def create_app():
         database='postgres'
     )
 
-    fetch_ports = create_fetch_ports(datasource)
-    fetch_rates = create_fetch_rates(datasource)
+    read_datasource = create_read_datasource(connection_pool)
+
+    fetch_ports = create_fetch_ports(read_datasource)
+    fetch_rates = create_fetch_rates(read_datasource)
+    fetch_exchange_rates = create_fetch_exchange_rates('a7656307f2e64132bd6a335d0e6daa2b')
 
     date_from_param = iso_date_param('date_from')
     date_to_param = iso_date_param('date_to')
