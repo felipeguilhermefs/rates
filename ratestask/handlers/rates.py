@@ -15,15 +15,13 @@ def create_rates_handler(
         orig_ports = orig_ports_param(params)
         dest_ports = dest_ports_param(params)
 
-        rates = []
-        if orig_ports and dest_ports:
-            rates = fetch_rates(
-                date_from,
-                date_to,
-                orig_ports,
-                dest_ports,
-                min_sample
-            )
+        rates = fetch_rates(
+            date_from,
+            date_to,
+            orig_ports,
+            dest_ports,
+            min_sample
+        )
 
         return jsonify(rates)
 

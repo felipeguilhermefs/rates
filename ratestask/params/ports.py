@@ -17,10 +17,15 @@ def ports_param(query_param, fetch_ports):
             return [param]
 
         # Although it does not ensure it is a valid region, it sanitizes the query param
-        if REGION_PATTERN.match(param):
-            return fetch_ports(param)
+        if not REGION_PATTERN.match(param):
+            raise InvalidQueryParam(
+                f'param \'{query_param}\' must be a port code or a region')
 
-        raise InvalidQueryParam(
-            f'param \'{query_param}\' must be a port code or a region')
+        ports = fetch_ports(param)
+        if not ports:
+            raise InvalidQueryParam(
+                f'param \'{query_param}\' does not have ports associated')
+
+        return ports
 
     return getter
