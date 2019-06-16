@@ -1,0 +1,1 @@
+from .insert_prices import create_insert_prices
