@@ -2,26 +2,18 @@ from flask import Flask, jsonify, request
 
 from .api_exception import InvalidQueryParam, InvalidContentType
 from .commands import create_insert_prices
-from .datasource import create_pool, create_read_datasource, create_write_datasource
+from .datasource import create_datasource
 from .handlers import create_prices_handler, create_rates_handler
 from .params import iso_date_param, ports_param, currency_param
 from .queries import create_fetch_exchange_rates, create_fetch_ports, create_fetch_rates
+
 
 def create_app():
     app = Flask(__name__)
 
     app.config.from_pyfile('config.py', silent=True)
 
-    connection_pool = create_pool(
-        user=app.config['PG_USER'],
-        password=app.config['PG_PASS'],
-        host=app.config['PG_HOST'],
-        port=app.config['PG_PORT'],
-        database=app.config['PG_DB']
-    )
-
-    read_datasource = create_read_datasource(connection_pool)
-    write_datasource = create_write_datasource(connection_pool)
+    read_datasource, write_datasource = create_datasource(app.config)
 
     fetch_ports = create_fetch_ports(read_datasource)
     fetch_rates = create_fetch_rates(read_datasource)
