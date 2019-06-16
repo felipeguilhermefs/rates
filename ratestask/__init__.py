@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 
 from .api_exception import InvalidQueryParam
+from .datasource import create_datasource
 from .params import iso_date_param, ports_param
 from .queries import create_fetch_ports
 
@@ -8,8 +9,13 @@ from .queries import create_fetch_ports
 def create_app():
     app = Flask(__name__)
 
-    def datasource(_, __):
-        return ['TESTS', 'TESTX']
+    datasource = create_datasource(
+        user='postgres',
+        password=None,
+        host='localhost',
+        port='5432',
+        database='postgres'
+    )
 
     fetch_ports = create_fetch_ports(datasource)
 
