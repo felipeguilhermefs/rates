@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 
 from .api_exception import InvalidQueryParam
 from .datasource import create_datasource
+from .handlers import create_rates_handler
 from .params import iso_date_param, ports_param
 from .queries import create_fetch_ports, create_fetch_rates
 
@@ -25,34 +26,21 @@ def create_app():
     orig_ports_param = ports_param('origin', fetch_ports)
     dest_ports_param = ports_param('destination', fetch_ports)
 
+    rates_handler = create_rates_handler(
+        date_from_param,
+        date_to_param,
+        orig_ports_param,
+        dest_ports_param,
+        fetch_rates
+    )
+
     @app.route('/rates')
     def get_rates():
-        params = request.args
-        date_from = date_from_param(params)
-        date_to = date_to_param(params)
-        orig_ports = orig_ports_param(params)
-        dest_ports = dest_ports_param(params)
-
-        rates = []
-        if orig_ports and dest_ports:
-            rates = fetch_rates(date_from, date_to, orig_ports, dest_ports)
-
-        return jsonify(rates)
+        return rates_handler(request)
 
     @app.route('/rates_null')
     def get_rates_null():
-        params = request.args
-        date_from = date_from_param(params)
-        date_to = date_to_param(params)
-        orig_ports = orig_ports_param(params)
-        dest_ports = dest_ports_param(params)
-
-        rates = []
-        if orig_ports and dest_ports:
-            rates = fetch_rates(date_from, date_to,
-                                orig_ports, dest_ports, min_sample=3)
-
-        return jsonify(rates)
+        return rates_handler(request, min_sample=3)
 
     @app.errorhandler(InvalidQueryParam)
     def handle_invalid_query_param(error):

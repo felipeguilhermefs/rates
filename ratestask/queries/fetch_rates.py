@@ -28,7 +28,7 @@ def create_fetch_rates(datasource):
             'average_price': average if total >= min_sample else None
         }
 
-    def fetch_rates(date_from, date_to, orig_ports, dest_ports, min_sample=0):
+    def fetch_rates(date_from, date_to, orig_ports, dest_ports, min_sample):
         query = build_query(date_from, date_to, orig_ports, dest_ports)
         return datasource(query, row_mapper=lambda r: build_rate(r, min_sample))
 
