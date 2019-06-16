@@ -9,7 +9,7 @@ def create_fetch_rates(datasource):
         dest_clause = build_ports_clause(dest_ports)
 
         return f"""
-    SELECT day, AVG(price) average_price
+    SELECT day, AVG(price) average_price, COUNT(*) total
     FROM prices
     WHERE
         day BETWEEN '{date_from}' AND '{date_to}'
@@ -19,14 +19,17 @@ def create_fetch_rates(datasource):
     ORDER BY day;
     """
 
-    def build_rate(record):
+    def build_rate(record, min_sample):
+        day = record[0]
+        average = record[1]
+        total = record[2]
         return {
-            'day': record[0],
-            'average_price': record[1]
+            'day': day,
+            'average_price': average if total >= min_sample else None
         }
 
-    def fetch_rates(date_from, date_to, orig_ports, dest_ports):
+    def fetch_rates(date_from, date_to, orig_ports, dest_ports, min_sample=0):
         query = build_query(date_from, date_to, orig_ports, dest_ports)
-        return datasource(query, row_mapper=build_rate)
+        return datasource(query, row_mapper=lambda r: build_rate(r, min_sample))
 
     return fetch_rates
