@@ -14,13 +14,13 @@ to fire up the PostgreSQL database.
 Build the image:
 
 ```bash
-docker build -t ratestask .
+$ docker build -t ratestask .
 ```
 
 Create the container for image *ratestask*:
 
 ```bash
-docker run -p 0.0.0.0:5432:5432 --name ratestask ratestask
+$ docker run -p 0.0.0.0:5432:5432 --name ratestask ratestask
 ```
 
 ## Web server
@@ -41,9 +41,14 @@ Install dependencies:
 $ pip install -r requirements.txt
 ```
 
+Edit server configuration (it has default configuration, but could be customized):
+```bash
+$ vim config.py
+```
+
 Start server (debug-mode):
 ```bash
-./start-debug-server.sh
+$ ./start-debug-server.sh
 ```
 
 # Task
@@ -58,12 +63,12 @@ Start server (debug-mode):
 
 Example `/rates`:
 ```bash
-curl http://localhost:5000/rates?date_from=2016-01-01&date_to=2016-01-10&origin=CNSGH&destination=north_europe_main
+$ curl http://localhost:5000/rates?date_from=2016-01-01&date_to=2016-01-10&origin=CNSGH&destination=north_europe_main
 ```
 
 Example `/rates_null`:
 ```bash
-curl http://localhost:5000/rates_null?date_from=2016-01-01&date_to=2016-01-2&origin=CNSGH&destination=north_europe_main
+$ curl http://localhost:5000/rates_null?date_from=2016-01-01&date_to=2016-01-2&origin=CNSGH&destination=north_europe_main
 ```
 
 ## POST API
@@ -79,12 +84,12 @@ curl http://localhost:5000/rates_null?date_from=2016-01-01&date_to=2016-01-2&ori
 
 Example `x-www-form-urlencoded`:
 ```bash
-curl -d "date_from=2019-01-01&date_to=2016-01-02&origin=CNSNZ&destination=baltic&price=1400" -X POST http://localhost:5000/prices -H "Content-Type: application/x-www-form-urlencoded"
+$ curl -d "date_from=2019-01-01&date_to=2016-01-02&origin=CNSNZ&destination=baltic&price=1400" -X POST http://localhost:5000/prices -H "Content-Type: application/x-www-form-urlencoded"
 ```
 
 Example `json`:
 ```bash
-curl -d '{"date_from":"2019-01-01","date_to":"2019-01-02","origin":"northern_europe","destination":"china_main","price":2345, "currency":"BRL"}' -X POST http://localhost:5000/prices -H "Content-Type: application/json"
+$ curl -d '{"date_from":"2019-01-01","date_to":"2019-01-02","origin":"northern_europe","destination":"china_main","price":2345, "currency":"BRL"}' -X POST http://localhost:5000/prices -H "Content-Type: application/json"
 ```
 
 ## Batch processing answer
