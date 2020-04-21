@@ -20,15 +20,9 @@ def create_app():
     fetch_exchange_rates = create_fetch_exchange_rates(app.config['EX_RT_API_KEY'])
     insert_prices = create_insert_prices(write_datasource)
 
-    orig_ports_param = ports_param('origin', fetch_ports)
-    dest_ports_param = ports_param('destination', fetch_ports)
     price_param = currency_param('price', 'currency', fetch_exchange_rates)
 
     prices_handler = create_prices_handler(
-        date_from_param,
-        date_to_param,
-        orig_ports_param,
-        dest_ports_param,
         price_param,
         insert_prices
     )

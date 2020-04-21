@@ -17,16 +17,18 @@ func main() {
 	// router.Run(":3000") // or some configured port
 }
 
-// rates_handler = create_rates_handler(
-// 	orig_ports_param,
-// 	dest_ports_param,
-// 	fetch_rates
-// )
-
-// PeriodQueryParam wrapp period data from requests
+// PeriodQueryParam wrap period data from requests
 type PeriodQueryParam struct {
 	From time.Time `form:"date_from" binding:"required" time_format:"2006-01-02"`
 	To   time.Time `form:"date_to" binding:"required" time_format:"2006-01-02"`
+}
+
+// RouteQueryParam wrap port/region data from requests
+// PORT_PATTERN = re.compile(r'^[A-Z]{5}$')
+// REGION_PATTERN = re.compile(r'^\w+$')
+type RouteQueryParam struct {
+	Origin      string `form:"origin" binding:"required"`
+	Destination string `form:"destination" binding:"required"`
 }
 
 func ratesHandler(minSample int) func(c *gin.Context) {
@@ -37,10 +39,18 @@ func ratesHandler(minSample int) func(c *gin.Context) {
 			return
 		}
 
+		var route RouteQueryParam
+		if err := c.ShouldBindQuery(&route); err != nil {
+			c.JSON(400, gin.H{"error": err.Error()})
+			return
+		}
+
 		c.JSON(200, gin.H{
-			"message": "rates" + string(minSample),
-			"from":    period.From,
-			"to":      period.To,
+			"message":     "rates" + string(minSample),
+			"from":        period.From,
+			"to":          period.To,
+			"origin":      route.Origin,
+			"destination": route.Destination,
 		})
 	}
 }
