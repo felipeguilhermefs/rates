@@ -1,7 +1,7 @@
 # Assignment
 
 The HTTP-based API described in the task was developed in Python using
-as little framework facilities as possible (whilst keeping viability) in 
+as little framework facilities as possible (whilst keeping viability) in
 order to show SQL and general coding knowledge.
 
 # Initial setup
@@ -14,13 +14,13 @@ to fire up the PostgreSQL database.
 Build the image:
 
 ```bash
-$ docker build -t ratestask .
+$ docker build -t rates .
 ```
 
-Create the container for image *ratestask*:
+Create the container for image *rates*:
 
 ```bash
-$ docker run -p 0.0.0.0:5432:5432 --name ratestask ratestask
+$ docker run -p 5432:5432 -e POSTGRES_PASSWORD=somepass --name rates rates
 ```
 
 ## Web server
