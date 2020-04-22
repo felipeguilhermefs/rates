@@ -7,23 +7,7 @@ CURRENCY_PATTERN = re.compile(r'^[A-Z]{3}$')
 
 def currency_param(price_param, currency_param, fetch_exchange_rates):
 
-    def to_int(params, param):
-        try:
-            return int(params[param])
-        except ValueError:
-            raise InvalidQueryParam(f'param \'{param}\' must be an integer')
-
     def getter(params):
-        if price_param not in params:
-            raise InvalidQueryParam(f'param \'{price_param}\' is required')
-
-        price = to_int(params, price_param)
-
-        if currency_param not in params:
-            return price
-
-        currency = params[currency_param]
-
         if currency == 'USD':
             return price
 

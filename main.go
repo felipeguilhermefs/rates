@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 
 	"github.com/felipeguilhermefs/rates/params"
 )
@@ -46,19 +47,19 @@ func ratesHandler(minSample int) func(c *gin.Context) {
 
 func pricesHandler(c *gin.Context) {
 	var period params.Period
-	if err := c.ShouldBindJSON(&period); err != nil {
+	if err := c.ShouldBindBodyWith(&period, binding.JSON); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	var route params.Route
-	if err := c.ShouldBindJSON(&route); err != nil {
+	if err := c.ShouldBindBodyWith(&route, binding.JSON); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
 	var fee params.Fee
-	if err := c.ShouldBindJSON(&fee); err != nil {
+	if err := c.ShouldBindBodyWith(&fee, binding.JSON); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
