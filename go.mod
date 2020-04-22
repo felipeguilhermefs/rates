@@ -1,4 +1,4 @@
-module ratestask
+module github.com/felipeguilhermefs/rates
 
 go 1.14
 
